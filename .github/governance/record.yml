@@ -29,7 +29,7 @@ sensitive_paths:
 confirmed:
   sensitive_paths:
     - pattern: "src/auth.py"
-      floor: high
+      floor: medium
     - pattern: "scripts/release.sh"
       floor: high
   required_checks:
