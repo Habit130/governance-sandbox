@@ -1,6 +1,6 @@
 """Fixture for a review probe. Never merge."""
 
-GREETING = "I am a teapot"
+GREETING = "I am a kettle"
 
 
 def greeting() -> str:
