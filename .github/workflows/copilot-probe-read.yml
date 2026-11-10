@@ -1,0 +1,45 @@
+name: copilot-probe-read
+
+# Probe for Habit130/agent-repo-governance#131. Never merge.
+# Reads the PR's reviews, review comments, check runs and Actions runs with the workflow
+# token only, and prints them. No checkout, no writes, no secrets, no third-party actions.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, review_requested]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  pull-requests: read
+  checks: read
+  actions: read
+
+jobs:
+  read:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Read review evidence with the workflow token
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          EVENT_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -u
+          echo "event=${{ github.event_name }}/${{ github.event.action }} actor=${{ github.actor }} run_attempt=${{ github.run_attempt }}"
+          echo "event_head=$EVENT_HEAD"
+          CUR=$(gh api "repos/$REPO/pulls/$PR" --jq .head.sha) || CUR="ERROR"
+          echo "current_head=$CUR"
+          echo "--- requested_reviewers (pulls/$PR/requested_reviewers)"
+          gh api "repos/$REPO/pulls/$PR/requested_reviewers" --jq '{users:[.users[]|{login,type}],teams:[.teams[].slug]}' || echo "READ FAILED"
+          echo "--- reviews (pulls/$PR/reviews)"
+          gh api --paginate "repos/$REPO/pulls/$PR/reviews" --jq '.[]|{id,login:.user.login,type:.user.type,state,commit_id,submitted_at,is_copilot_code_review,copilot_code_review_effort,copilot_code_review_sources,body_head:(.body[0:80])}' || echo "READ FAILED"
+          echo "--- review comments (pulls/$PR/comments)"
+          gh api --paginate "repos/$REPO/pulls/$PR/comments" --jq '.[]|{id,login:.user.login,pull_request_review_id,commit_id,original_commit_id,path,line,is_copilot_code_review,body_head:(.body[0:160])}' || echo "READ FAILED"
+          for SHA in "$CUR" "$EVENT_HEAD"; do
+            echo "--- check runs on $SHA (commits/$SHA/check-runs)"
+            gh api "repos/$REPO/commits/$SHA/check-runs?per_page=100" --jq '.check_runs[]|{id,name,app:.app.slug,status,conclusion,head_sha,started_at,completed_at}' || echo "READ FAILED"
+            echo "--- Actions runs on $SHA (actions/runs?head_sha=)"
+            gh api "repos/$REPO/actions/runs?head_sha=$SHA&per_page=100" --jq '.workflow_runs[]|{id,name,event,path,status,conclusion,head_sha,actor:.actor.login,triggering_actor:.triggering_actor.login,html_url}' || echo "READ FAILED"
+          done

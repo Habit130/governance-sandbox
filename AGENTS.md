@@ -190,3 +190,9 @@ This is a standing sandbox for live checks of the governance model, not a real p
 repository carries no rules of its own beyond the governance model above. `src/auth.py`
 (authentication) and `scripts/release.sh` (release) are sensitive paths with a high floor
 (`.github/governance/record.yml`).
+
+### Probe rule SBX-PROBE-131
+
+This rule exists only for a review probe. No string literal in `probe/` may contain the word
+`teapot`, in any case. Report every such literal as a finding whose text begins with
+`SBX-PROBE-131:` and names the file and line.
