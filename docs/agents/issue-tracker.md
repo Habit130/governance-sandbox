@@ -30,18 +30,22 @@ GitHub shares one number space between issues and PRs: resolve a bare `#42` with
   `gh issue create`, or `gh issue edit <n> --repo Habit130/governance-sandbox --add-blocked-by <blocker>`
   (`--remove-blocked-by` to undo) on an existing issue.
 - **Read both**: `gh issue view <n> --repo Habit130/governance-sandbox --json parent,subIssues,blockedBy,blocking`.
-  A ticket is unblocked once every blocker under `blockedBy` has merged, its PR closing it; a
-  wayfinder ticket, once every blocker is closed.
+  A ticket is unblocked once every blocker under `blockedBy` is done: a PR-delivered
+  ticket has merged, its PR closing it; a results-comment ticket (`builder.md`) is closed
+  as completed. A wayfinder ticket is unblocked once every blocker is closed.
 
 ## Tickets
 
-- **Dispatch**: `triage-labels.md`, `ready-for-agent`.
+- **Dispatch**: `triage-labels.md`, `ready-for-agent`. A spec approved for whole-spec
+  delivery is dispatched as one, its tickets with it (`planner.md`, Specs).
 - **Claim**: `gh issue edit <n> --repo Habit130/governance-sandbox --add-assignee @me`. It is the Builder's
-  first write, and it posts no comment. An assigned ticket is claimed.
+  first write, and it posts no comment. An assigned ticket is claimed. A Builder on a
+  whole-spec delivery claims the spec and each of its tickets (`builder.md`).
 - **A published ticket is frozen** (`planner.md`, Tickets). It carries no digests or contract
   versions, since GitHub keeps the body's edit history. Evidence and records go in comments.
-- **Work closes through PRs**: a PR's `Closes #<n>` lines close those issues when habit merges
-  it (`.github/PULL_REQUEST_TEMPLATE.md`).
+- **Closing**: results-comment tickets follow `builder.md`, Results-comment tickets.
+  For PR delivery, a PR's `Closes #<n>` lines close those issues when habit merges it
+  (`.github/PULL_REQUEST_TEMPLATE.md`).
 
 ## Pull requests as a triage surface
 
