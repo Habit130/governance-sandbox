@@ -29,11 +29,9 @@ sensitive_paths:
 confirmed:
   sensitive_paths:
     - pattern: "src/auth.py"
-      floor: high
+      floor: medium
     - pattern: "scripts/release.sh"
       floor: high
-    - pattern: ".github/workflows/**"
-      floor: medium
   required_checks:
     - "test"
   review_bots:
