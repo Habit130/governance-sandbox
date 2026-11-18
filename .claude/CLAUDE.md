@@ -22,3 +22,6 @@ Claude Code, and never adds, relaxes or contradicts a rule.
 
 - Run the tests with the Bash tool, as `docs/agents/build.md` gives them. They need only
   `python3` and its standard library, with no install.
+- The repository's runbook and its one prohibition, that only habit runs
+  `scripts/release.sh`, are in `AGENTS.md`'s "This repository", imported above. In Claude
+  Code that means never calling the Bash tool on `scripts/release.sh`.
