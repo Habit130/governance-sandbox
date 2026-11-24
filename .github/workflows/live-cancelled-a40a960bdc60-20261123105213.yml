@@ -1,0 +1,13 @@
+name: live-cancelled-run
+on:
+  push:
+    branches: ["main"]
+    paths: ["live-checks/a40a960bdc60-20261123105213.md"]
+permissions:
+  contents: read
+jobs:
+  timeout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - run: sleep 120
