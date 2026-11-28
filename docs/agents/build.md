@@ -24,7 +24,10 @@ merges, and no agent runs it.
 ## CI
 
 - `.github/workflows/ci.yml` (`ci`): trigger `pull_request`, no path filters. One job,
-  `test`, a required check, runs `python3 -m unittest discover -s tests -v` on the PR head.
+  `test`, a required check, runs `python3 -m unittest discover -s tests -v`. Its checkout
+  takes `pull_request`'s default ref, GitHub's test merge of the PR head into the base, so it
+  covers that merge commit, not the PR head itself. When a review needs the exact head
+  verified, run the command locally on that head.
 - `.github/workflows/governance-gate.yml`: the `governance-gate` job judges every PR into
   `main` (`pull_request_target`), and is a required check.
 - `.github/workflows/merge-watch.yml`: Merge watch, on pushes to `main` and completed
